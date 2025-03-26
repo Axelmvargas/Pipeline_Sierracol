@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "sierracol-454723",
+  "private_key_id": "7abca83b413fca26cb3fc9a6ff058c4ed72ebeda",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCmGpdwKCsSNQ/E\nZvcWUjCkyFhBFWGBacbYpmNXGI+kV9+soABdHYYXm8JEHivqTOGdLfqrtiODJ93X\nIQ8B3G5Lez07dKJuRHT5awocmomuyQBhiDKJscOvov7s+VqR0La06r2grrOqTQYC\niGtvkoXNX7mBnG6+cG7s9JmnTeZOwMayyYVSMU2Hsk4z3F/8s6QDg8DqdloKhBYs\nIqshLzqi0IB/yvTTQe/o/tieCdribOQihN2JG8362wFcVVdekDrJcivvyn6MxE4f\nBq6YXE5pOpuM0dlqnizKLQZqhlCmehkZ35jYHCuN+T5M61m67KGFuoPh7UsqFAYE\nf8MAbSMDAgMBAAECggEAFN4rX2ZUfu2WpQSQj0fVH6ah289dWB5bYnWI7nTB+xIl\nIjFZylj+szGY1uj5eG6fO5l+sBrqXDxidPgMxB2W57m8aB9Pls3X6kvl0dEicgiD\nmT08qCrinEq8fzYWiFIx2gnRuAGqxb72fdP4t2Qvli0sB5oJGbjTXsaeFTRGtmby\nePvGWxNNl2KUBf6ylHVkXWozEt/lc1q2ut8qeCQToaNUO3chyNAu/RFpwpArJjUo\nl4Y+HpgQbAkP1XwtwXOy8jjB+Pnmn39izhZjulCefvmjXLm+Kkeziu1BsuVNFNNp\nQI9H6eg0WcWLV4LOSWZkZFRdvUnpGASkw2/jegA6cQKBgQDpdtpGXnDAonX/v8DK\n1+xSpyJAK+9FNqn0Io2usgpOR3dK/JANjUbxNz6F+J3cJQdjhPcQy9/SHK3BUVpQ\nfXozhK82IaPEQr2R6+WV20i0EWDWV2b128IehFzq8tu9506KpE2Js40e0GQIZFTi\nOnf1N6MZiKnc3eK4YefTERj0EwKBgQC2IzFagTfQ440iXLQqqZ9CuOj9IKAZx2zu\n+xyV2bpUaq2lDDpSB/esljjPw1nAsti4yzvh0zIIpM/GUHjN1gS+f8TN3BWrnd3u\nsdsw4CNbbLGqhR6vQoAm4OCdDmMbnKhf9hsZoXQhlrxuIzk+BVrjaNqknHcUQYk5\nXD31UTuTUQKBgQDnaKdymKmqR14u4iJ27Q+R3ZhVgzbnpAdRte45+r+8V5om+bDP\nvflTny6aHJRcYVexjVpXi72Oxl5z/+9FWRqHdj01qqJpJr5ApVIr9+9YjOEvk/K6\nP9lp5kkzmQW2dk+jnLg+hXqb0HNW3hxFIS9GIJ/J72xvQIA5wtHGpGvXgQKBgBMj\nI35k8V5ralrf7rZE2E0EbMab9PaAc7uwetJr7B4Oj2w2GrKfz7A8oH+EARw0Ln1M\nLWCO9kTePE6UCf1mrVzuw9j1dPlxPu5jlapPAqgKhahrEExN6nUrT65w4oz2KuLa\nUwKgajlVQzs3TD5uBZy7Wa3OGtzv/eEfBguOm3nhAoGAGmR0o7ZQ2Y4xskry+qGN\n0koaCSPZmupcPF1EEv5ARX3WnWaL/zSmWHHEA3po2mh7SeErC0LAcTrQEL5ybuie\nulSAaybVxSwJIKZvpAVopwS63/YMrhSbKjmNI/Geh+SCrlxB9oqT1dTpDVslu8LA\nL+CncjEHrPXxdzVoLOOfm14=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sierracol@sierracol-454723.iam.gserviceaccount.com",
+  "client_id": "112859466028255149101",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sierracol%40sierracol-454723.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

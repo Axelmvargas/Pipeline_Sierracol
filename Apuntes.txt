@@ -1,0 +1,42 @@
+cri_fatalities_corr: -0.2935
+Existe una correlación negativa débil entre el cri_score (riesgo climático) y el número total de fatalidades (fatalities_total). Esto sugiere que, en general, los países con un mayor riesgo climático tienden a tener ligeramente menos fatalidades, aunque la relación no es muy fuerte.
+
+cri_losses_corr: -0.2381
+Similarmente, hay una correlación negativa débil entre el cri_score y las pérdidas por PIB (losses_per_gdp__total). Esto indica que los países con mayor riesgo climático tienden a tener ligeramente menores perdidas por GDP.
+
+fatalities_losses_corr: -0.0321
+La correlación entre las fatalidades totales y las pérdidas por PIB es muy débil y cercana a cero. Esto significa que no hay una relación lineal significativa entre estas dos variables.
+
+temp_fatalities_corr: -0.0307
+La correlación entre la temperatura y las fatalidades totales es muy debil, casi nula.
+
+temp_losses_corr: 0.1638
+Existe una correlación positiva debil entre la temperatura y las perdidas por GDP. Esto indica que a mayor temperatura, ligeramente mayores perdidas por GDP.
+
+temp_cri_corr: 0.0245
+La correlación entre la temperatura y el cri_score es muy debil, casi nula.
+
+humidity_fatalities_corr: 0.0067
+La correlación entre la humedad y las fatalidades totales es muy debil, casi nula.
+
+humidity_losses_corr: 0.0646
+La correlación entre la humedad y las perdidas por GDP es muy debil, casi nula.
+
+humidity_cri_corr:
+La correlación entre la humedad y el cri_score es muy debil, casi nula.
+
+Puntos Clave:
+Las correlaciones entre el cri_score y las variables de fatalidades y pérdidas son negativas débiles. Esto podría indicar que otros factores, además del riesgo climático, influyen en las fatalidades y las pérdidas económicas.
+
+La correlación entre las fatalidades y las pérdidas es muy débil, lo que sugiere que estos dos impactos pueden ser independientes.
+
+Las correlaciones entre la temperatura y la humedad con las demas variables son muy debiles, lo que indica que no existe una relacion lineal fuerte entre estas.
+
+Consideraciones Adicionales:
+Correlación no implica causalidad: Recuerda que la correlación solo mide la relación lineal entre variables. No implica que una variable cause la otra.
+
+Valores atípicos: Los valores atípicos pueden afectar las correlaciones. Considera identificar y analizar los valores atípicos en tus datos.
+
+Relaciones no lineales: La correlación solo mide relaciones lineales. Podría haber relaciones no lineales entre las variables que no se capturan con esta medida.
+
+Factores externos: Es importante recordar que existen muchos factores externos que pueden influir en estos datos.
