@@ -1,0 +1,96 @@
+--Distribución de cri_score(Riesgo Climatico)
+SELECT
+  MIN(cri_score) AS min_cri_score,
+  AVG(cri_score) AS avg_cri_score,
+  MAX(cri_score) AS max_cri_score,
+  STDDEV(cri_score) AS stddev_cri_score
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+
+--Correlación entre cri_score y fatalities_total
+SELECT
+  CORR(cri_score, fatalities_total) AS correlation
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+
+--Top 10 Países con mayor cri_score
+SELECT
+  country,
+  cri_score
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+ORDER BY cri_score DESC
+LIMIT 10
+
+--Temperatura promedio por descripción del clima
+SELECT
+  descripcion,
+  AVG(temperatura) AS avg_temperature
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+GROUP BY descripcion
+ORDER BY avg_temperature DESC
+
+--Paises con peor cri_rank y su temperatura promedio
+SELECT
+  country,
+  cri_rank,
+  AVG(temperatura) as avg_temp
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+GROUP BY 1,2
+ORDER BY cri_rank ASC
+LIMIT 10
+
+--Paises con mayor temperatura promedio y sus perdidas por GDP
+SELECT
+  country,
+  AVG(temperatura) as avg_temp,
+  AVG(losses_usdm_ppp_total) as avg_loss_per_GDP
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+GROUP BY country
+ORDER BY avg_temp DESC
+LIMIT 10
+
+--Distribucion de descripciones del clima
+SELECT
+  descripcion,
+  COUNT(*) as count
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+GROUP BY descripcion
+ORDER BY count DESC
+
+--Países con mayores pérdidas por PIB
+SELECT
+  country,
+  losses_per_gdp__total
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
+ORDER BY losses_per_gdp__total DESC
+LIMIT 10
+
+--Revision de valores null
+SELECT
+  COUNT(*) - COUNT(country) AS null_country,
+  COUNT(*) - COUNT(cri_rank) AS null_cri_rank,
+  COUNT(*) - COUNT(cri_score) AS null_cri_score,
+  COUNT(*) - COUNT(fatalities_per_100k_rank) AS null_fatalities_per_100k_rank,
+  COUNT(*) - COUNT(fatalities_per_100k_total) AS null_fatalities_per_100k_total,
+  COUNT(*) - COUNT(fatalities_rank) AS null_fatalities_rank,
+  COUNT(*) - COUNT(fatalities_total) AS null_fatalities_total,
+  COUNT(*) - COUNT(losses_per_gdp__rank) AS null_losses_per_gdp__rank,
+  COUNT(*) - COUNT(losses_per_gdp__total) AS null_losses_per_gdp__total,
+  COUNT(*) - COUNT(losses_usdm_ppp_rank) AS null_losses_usdm_ppp_rank,
+  COUNT(*) - COUNT(losses_usdm_ppp_total) AS null_losses_usdm_ppp_total,
+  COUNT(*) - COUNT(rw_country_code) AS null_rw_country_code,
+  COUNT(*) - COUNT(temperatura) AS null_temperatura,
+  COUNT(*) - COUNT(humedad) AS null_humedad,
+  COUNT(*) - COUNT(descripcion) AS null_descripcion,
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial` 
+
+--Correlación entre campos
+SELECT
+  CORR(cri_score, fatalities_total) AS cri_fatalities_corr,
+  CORR(cri_score, losses_per_gdp__total) AS cri_losses_corr,
+  CORR(fatalities_total, losses_per_gdp__total) AS fatalities_losses_corr,
+  CORR(temperatura, fatalities_total) as temp_fatalities_corr,
+  CORR(temperatura, losses_per_gdp__total) as temp_losses_corr,
+  CORR(temperatura, cri_score) as temp_cri_corr,
+  CORR(humedad, fatalities_total) as humidity_fatalities_corr,
+  CORR(humedad, losses_per_gdp__total) as humidity_losses_corr,
+  CORR(humedad, cri_score) as humidity_cri_corr,
+FROM `natural-cistern-454823-m8.Sierracol001.cruce_inicial`
