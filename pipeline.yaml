@@ -1,0 +1,14 @@
+# pipeline.yaml
+jobName: clima-data-pipeline
+type: DataflowFlexTemplate
+templateGcsPath: gs://sierracol01/templates/clima-data-pipeline-template.json
+parameters:
+  project: natural-cistern-454823-m8
+  region: us-central1
+  tempLocation: gs://sierracol01/temp/
+  stagingLocation: gs://sierracol01/staging/
+  inputFile: gs://sierracol01/climate-risk-index-1.csv
+  datasetId: Sierracol001
+  tableId: cruce_inicial005
+  apiKey: "7e728c5e2d0619a44e1f8c31a1255eeb"
+  credentialsPath: "natural-cistern-454823-m8-65cfa8c8881c.json"
