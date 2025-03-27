@@ -1,21 +1,19 @@
-import pandas as pd
-import requests
-import time
 import logging
+import requests
+import csv
 from google.cloud import bigquery
-import os
-from google.api_core import exceptions
-from google.api_core import retry
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+import time
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-CREDENTIALS_PATH = r"C:\Users\axelm\OneDrive\Documentos\Desarrollos\Prueba_Sierracol\natural-cistern-454823-m8-65cfa8c8881c.json"
+# Constantes
 API_KEY = "7e728c5e2d0619a44e1f8c31a1255eeb"
-ARCHIVO_CSV = "climate-risk-index-1.csv"
 PROJECT_ID = "natural-cistern-454823-m8"
 DATASET_ID = "Sierracol001"
-TABLE_ID = "cruce_inicial002"
-
+TABLE_ID = "cruce_inicial005"
+CREDENTIALS_PATH = "natural-cistern-454823-m8-65cfa8c8881c.json"
+BUCKET_NAME = "sierracol01"
+ARCHIVO_CSV = "climate-risk-index-1.csv"
 ciudades_alternativas = {
     "South Africa": ["Pretoria", "Cape Town", "Johannesburg"],
     "Republic of Serbia": "Belgrade",
@@ -26,79 +24,88 @@ ciudades_alternativas = {
     "Saint Kitts and Nevis": "Basseterre",
 }
 
-@retry.Retry(predicate=retry.if_exception_type(requests.exceptions.RequestException))
 def obtener_clima(ciudad, api_key):
-    """Obtiene datos climáticos de la API de OpenWeatherMap con reintentos."""
+    """Obtiene datos climáticos de la API de OpenWeatherMap."""
     if isinstance(ciudad, list):
         for city in ciudad:
             url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
-            respuesta = requests.get(url)
-            respuesta.raise_for_status()
-            return respuesta.json()
+            try:
+                respuesta = requests.get(url)
+                respuesta.raise_for_status()
+                return respuesta.json()
+            except requests.exceptions.RequestException:
+                continue
         return None
     else:
         url = f"http://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={api_key}&units=metric"
-        respuesta = requests.get(url)
-        respuesta.raise_for_status()
-        return respuesta.json()
-
-@retry.Retry(predicate=retry.if_exception_type(exceptions.ServiceUnavailable))
-def cargar_datos_bigquery(client, df_unido, table_ref, job_config):
-    """Carga datos en BigQuery con reintentos."""
-    job = client.load_table_from_dataframe(df_unido, table_ref, job_config=job_config)
-    job.result()
-
-def procesar_datos():
-    """Procesa los datos climáticos y los carga en BigQuery."""
-    try:
-        df_csv = pd.read_csv(ARCHIVO_CSV)
-    except FileNotFoundError:
-        logging.error(f"No se encontró el archivo: {ARCHIVO_CSV}")
-        return
-
-    datos_clima = []
-    for pais in df_csv["rw_country_name"]:
-        ciudad = ciudades_alternativas.get(pais, pais)
         try:
-            datos = obtener_clima(ciudad, API_KEY)
-            if datos:
-                datos_clima.append({
-                    "pais": pais,
-                    "temperatura": datos["main"]["temp"],
-                    "humedad": datos["main"]["humidity"],
-                    "descripcion": datos["weather"][0]["description"]
-                })
-            else:
-                logging.warning(f"No se encontraron datos para {pais}")
-        except Exception as e:
-            logging.error(f"Error al obtener datos para {pais}: {e}")
-        time.sleep(1)
+            respuesta = requests.get(url)
+            respuesta.raise_for_status()
+            return respuesta.json()
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error obteniendo clima para {ciudad}: {e}")
+            return None
 
-    df_clima = pd.DataFrame(datos_clima)
-    df_unido = pd.merge(df_csv, df_clima, left_on="rw_country_name", right_on="pais")
+def transformar_datos(element):
+    """Transforma los datos del CSV y añade la información climática"""
+    try:
+        with open(element, 'r', newline='', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            datos_transformados = []
+            for row in reader:
+                pais = row["country"]
+                ciudad = ciudades_alternativas.get(pais, pais)
+                datos = obtener_clima(ciudad, API_KEY)
+                if datos:
+                    row["temperatura"] = datos["main"]["temp"]
+                    row["humedad"] = datos["main"]["humidity"]
+                    row["descripcion"] = datos["weather"][0]["description"]
+                    datos_transformados.append(row)
+                else:
+                    logging.warning(f"No se encontraron datos para {pais}")
+                time.sleep(1)
+            return datos_transformados
+    except FileNotFoundError:
+        logging.error(f"No se encontró el archivo: {element}")
+        return []
 
-    # Eliminar las columnas no deseadas y valores nulos 
-    columnas_a_eliminar = ['index', 'cartodb_id', 'the_geom', 'the_geom_webmercator', 'rw_country_name', 'pais']
-    df_unido.drop(columnas_a_eliminar, axis=1, errors='ignore', inplace=True)
-    
-    df_unido = df_unido[df_unido['rw_country_code'].notna()]
-    
-    mediana_losses_gdp = df_unido['losses_per_gdp__total'].median()
-    df_unido['losses_per_gdp__total'].fillna(mediana_losses_gdp, inplace=True)    
-
-    client = bigquery.Client.from_service_account_json(CREDENTIALS_PATH, project=PROJECT_ID)
-    table_ref = client.dataset(DATASET_ID).table(TABLE_ID)
+def cargar_datos_bigquery(element, project_id, dataset_id, table_id):
+    """Carga los datos en BigQuery"""
+    client = bigquery.Client.from_service_account_json(CREDENTIALS_PATH, project=project_id)
+    table_ref = client.dataset(dataset_id).table(table_id)
 
     job_config = bigquery.LoadJobConfig(
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
     )
 
     try:
-        cargar_datos_bigquery(client, df_unido, table_ref, job_config)
-        logging.info(f"Datos cargados en BigQuery: {PROJECT_ID}.{DATASET_ID}.{TABLE_ID}")
-        print(df_unido.head())
+        client.load_table_from_json(element, table_ref, job_config=job_config)
+        logging.info(f"Datos cargados en BigQuery: {project_id}.{dataset_id}.{table_id}")
     except Exception as e:
         logging.error(f"Error al cargar datos en BigQuery: {e}")
 
-if __name__ == "__main__":
-    procesar_datos()
+def run(argv=None):
+    """Define el pipeline y lo ejecuta en Dataflow"""
+    pipeline_options = PipelineOptions(
+        flags=argv,
+        project=PROJECT_ID,
+        runner='DataflowRunner',
+        temp_location=f'gs://{BUCKET_NAME}/temp/',
+        region='us-central1', 
+        staging_location=f'gs://{BUCKET_NAME}/staging/'
+    )
+
+    with beam.Pipeline(options=pipeline_options) as pipeline:
+        logging.info(f"Ruta al archivo CSV: gs://{BUCKET_NAME}/{ARCHIVO_CSV}")
+
+        # Lee el archivo CSV desde GCS
+        datos_csv = pipeline | 'Leer archivo CSV' >> beam.Create([f"gs://{BUCKET_NAME}/{ARCHIVO_CSV}"])
+
+        # Transforma los datos
+        datos_transformados = datos_csv | 'Transformar datos' >> beam.FlatMap(transformar_datos)
+
+        # Carga los datos a BigQuery
+        datos_transformados | 'Cargar en BigQuery' >> beam.Map(cargar_datos_bigquery, project_id=PROJECT_ID, dataset_id=DATASET_ID, table_id=TABLE_ID)
+
+if __name__ == '__main__':
+    run()
